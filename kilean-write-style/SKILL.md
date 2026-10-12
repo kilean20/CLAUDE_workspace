@@ -20,6 +20,23 @@ Use this evidence order when sources differ:
 
 Match the rhetorical behavior before matching vocabulary. Do not create a superficial imitation by sprinkling in favored words.
 
+## What the voice consists of
+
+Tone and word choice are only two of the dimensions this skill controls. In rough order of how strongly they identify the voice:
+
+1. **Rhetorical architecture**: constraint → difficulty → response → reason → result or limit, at paragraph and document scale.
+2. **Stance**: definite about completed work, qualified about interpretation and transfer, with evaluative words earned by a nearby mechanism or number.
+3. **Comparison structure**: concede the alternative's proper domain, delimit the present problem class, then choose.
+4. **Agency and tense**: *we* for decisions, the method or result as subject for behavior, passive for setup; past tense for what was done, present for what a method does or a figure shows.
+5. **Cohesion**: explicit connectors and *This + specific noun* anaphora.
+6. **Quantitative anchoring**: operational quantities such as evaluations, seconds, beam time, and dimensions justify each method choice.
+7. **Diction**: established technical terms, defined acronyms repeated consistently, a practical evaluative vocabulary, and no ornamental words.
+8. **Sentence and paragraph rhythm**: moderate declaratives with conditions kept attached; a few short consequence sentences.
+9. **Figure, equation, and citation integration**: state the question a figure answers and the feature to inspect; explain the terms after an equation; cite at the specific claim.
+10. **Punctuation and recurring phrases**: commas and parentheses carry most of the load; colons and dashes are occasional; recurring multi-word phrases are reported by the checker.
+
+[references/profile.md](references/profile.md) gives the evidence and calibration status of each dimension. Tense, *This* anaphora, paragraph length, citation habits, and recurring phrases have measures added after the last corpus pass. The checker reports them, but they are not yet range-checked.
+
 ## Choose the register
 
 Use the **journal register** by default for archival papers and formal technical documents. It is formal, explanatory, and occasionally advocative, but not ornate. Sentences are usually moderate in length, commonly around 19–22 words, with a longer sentence when a condition or mechanism must remain attached to the claim. Explain the reason for a technical choice and state its scope. Use first person for author decisions and actions, but let a method, measurement, or result be the subject when describing its properties.
@@ -44,6 +61,7 @@ The tone is confident about what was implemented or observed and cautious about 
 - Use the **method, system, measurement, or result** as the subject when describing behavior: *BO uses all online data; measurement noise persists; the model predicts; Fig. 4 shows*.
 - Passive voice is natural for definitions, established procedures, and experimental setup: *the parameters are reconstructed; the model was trained*.
 - Do not force every paragraph into first person and do not replace a clear technical subject with “we” merely to meet a count.
+- Use the **past tense** for what was done or observed in this work (*we implemented, the model was trained, the beam test showed*) and the **present tense** for what a method does, what a figure shows, and what the paper presents (*BO uses, Figure 4 shows, we present*). This follows the quoted corpus examples; the tense mix is measured by `--detail` but not yet calibrated.
 
 ## Paragraph and sentence movement
 
@@ -94,8 +112,19 @@ When comparing methods, first identify the problem class or condition under whic
 1. Settle the science, evidence, terminology, and claim strength first.
 2. Choose the register and rewrite by paragraph, following the problem-to-response movement above.
 3. Preserve quotations, recorded protocols, and wording the user has frozen.
-4. Run `python scripts/style_check.py DRAFT --compare` for the journal register, or add `--register proceedings`. Treat the recency-weighted measurements as diagnostics, not requirements; inspect the prose before changing a scientifically necessary sentence.
+4. Run `python scripts/style_check.py DRAFT --compare` for the journal register, or add `--register proceedings`. Treat the recency-weighted measurements as diagnostics, not requirements; inspect the prose before changing a scientifically necessary sentence. Add `--detail` to see tense, passive voice, opener types, bare versus specific *This*, citation and acronym habits, and recurring phrases; use these to spot a strong mismatch, since they have no calibrated range yet.
 5. Read the result once for agency, practical motivation, explicit contrast or cause, supported evaluation, and bounded claims. If praise lacks nearby support, replace it with the mechanism, constraint, or observed result. Do not remove a strong evaluative word merely because it is strong.
 6. For a large rewrite, show a representative paragraph first when the user has not already approved the direction.
 
 The aim is current published voice with correct English. Do not reproduce non-native grammatical slips from the source papers.
+
+## Refresh the evidence
+
+When a new Kilean-led paper appears, or to calibrate the extended measures, add it to `MANIFEST` in `scripts/corpus.py` and run:
+
+```
+python scripts/corpus.py fetch      # downloads to ~/.cache/kilean-write-style, or use --pdf-dir with <id>.pdf files
+python scripts/corpus.py profile    # recency-weighted report per register, with suggested checker ranges
+```
+
+Fetching needs network access to arxiv.org, proceedings.jacow.org, and journals.aps.org (or www.osti.gov). If they are blocked, place the PDFs in a directory and pass `--pdf-dir`. Review the extracted text once, then update `PROFILES` in `scripts/style_check.py` and the tables in `references/profile.md` from the report. Keep paper text out of the repository.

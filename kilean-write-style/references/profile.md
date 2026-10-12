@@ -2,6 +2,8 @@
 
 Rebuilt 2026-10-11 after Kilean reported that the earlier skill did not yet sound like him, then refined with explicit recency weighting. This profile describes his **published output after 2021**. It does not try to separate every coauthor or editor contribution from the final prose.
 
+Extended 2026-10-12 with an inventory of style dimensions beyond tone and word choice, new checker measures for the dimensions that had not been quantified, a reproducible corpus pipeline (`scripts/corpus.py`), and one supplementary unpublished draft. The papers could not be re-downloaded in that session because the network policy blocked the publisher hosts. The measurements in the tables below therefore remain those of the 2026-10-11 pass. The new measures are listed as **awaiting calibration** until `corpus.py profile` has been run on the eight texts.
+
 ## Corpus and attribution
 
 The primary corpus contains eight papers or preprints in which Kilean is first author and, for the journal papers, corresponding author. These texts provide the strongest available evidence for wording and sentence-level choices.
@@ -153,6 +155,68 @@ Proceedings compress context, use more short subsection labels, and often move q
 Treat the following as stable across the period: practical motivation, explicit logical relations, consistent technical terms, direct reporting verbs, concrete comparisons, visible model or measurement limitations, and selective figure interpretation.
 
 Treat the following as current 2025–2026 preferences when no user example overrides them: lower dependence on first-person openings, stronger method/result subjects, compact labeled decomposition, supported evaluative language, balanced domain-specific comparison, and occasional colons or dashes. Do not resurrect a 2022 conversational phrase merely because it appears in the corpus.
+
+## Dimensions of style and calibration status
+
+Tone and favored words are the most visible parts of a voice but not the most identifying. The table lists every dimension the skill controls, the evidence behind it, and the checker measure that tracks it. “Measured” means quantified in the 2026-10-11 corpus pass. “Qualitative” means documented from reading the corpus. “Awaiting calibration” means the checker now reports the measure but no corpus range exists yet.
+
+| Dimension | What it captures | Evidence status | Checker measure |
+|---|---|---|---|
+| Rhetorical architecture | constraint → difficulty → response → reason → result or limit | qualitative, all eight texts, stable 2022–2026 | none; read the draft |
+| Document moves | descriptive titles, functional headings, abstract arc, bounded transfer in conclusions | qualitative | none |
+| Stance | definite about completed work, qualified about interpretation; evaluation earned nearby | measured (qualification, evaluative terms) and qualitative | `qualification_markers`, `evaluative_terms`; `boosters` awaiting calibration |
+| Comparison structure | concede → delimit → choose | qualitative, clearest in the 2026 PRAB paper | `contrast_markers` (indirect) |
+| Agency | *we* for decisions, technical subjects for behavior, passive for setup | measured (first person, *we* openers) | `first_person`, `we_sentence_openers_pct`; `passive_constructions` awaiting calibration |
+| Tense | past for work done, present for method behavior, figures, and paper content | inferred from the quoted examples, not measured | `be_past_share_pct`, `we_verb_tense`, awaiting calibration |
+| Cohesion | explicit connectors; *This/Such + specific noun* anaphora | connectors measured; anaphora qualitative | transition and marker rates; `this_these_openers`, `bare_this_openers` awaiting calibration |
+| Sentence rhythm | median about 20 words, 90th percentile about 35 | measured | median, p90, short share; `mean_sentence_words`, `sentence_length_cv` awaiting calibration |
+| Paragraph length | sentences per paragraph | not measured | `paragraph_median_sentences`, approximate for PDF text |
+| Diction | practical evaluative words, response verbs, no ornament | measured word lists and qualitative | `evaluative_terms`, `generic_flourishes`, `conversational_markers` |
+| Nominal versus verbal style | density of *-tion/-ment/-ance* nouns | not measured | `nominalizations`, awaiting calibration |
+| Recurring phrases | multi-word lexical bundles that recur across papers | not measured | `top_3gram_bundles`, `top_4gram_bundles`; `corpus.py` reports bundles present in at least half the texts |
+| Result clauses | comma + *-ing* clause carrying a consequence (*…, reducing the number of switches*) | supplementary draft only | `comma_ing_clauses`, awaiting calibration |
+| Quantitative anchoring | operational numbers justify method choices | qualitative | `numbers`, awaiting calibration |
+| Terminology and acronyms | define once in parentheses, then repeat | qualitative | `acronym_tokens`, `distinct_acronyms`, `acronym_definitions` |
+| Citation and prior work | where citations sit; *Ref. [n]* versus bare *[n]*; how alternatives are characterized | comparison structure qualitative; citation habits not analyzed | `numeric_citations`, `pointer_hits` |
+| Figure and equation integration | question → feature → inference; terms explained after equations | qualitative | `figure_table_equation` share of openers |
+| Modality | the mix of *can, may, could, will* | rate measured within qualification markers | `modal_share_pct`, awaiting calibration |
+| Punctuation | commas and parentheses dominant; occasional colons and dashes | counted, contaminated by notation | reported, not compared |
+| Lists and enumeration | compact labeled decomposition in proceedings | qualitative | `enumeration_markers` |
+| Register flags | no contractions, questions, or singular first person in prose | qualitative | `contractions`, `questions`, `first_person_singular` |
+
+## Supplementary unpublished evidence
+
+One unpublished text is used for corroboration only and does not enter any calibration: the abstract in `msBO_paper_abstract.txt` in the public kilean20/msBO repository (committed by Kilean in July 2026, 195 words). It is pre-review draft prose, so it is closer to the individual voice than copyedited text, but it is too short and too singular to set a rate.
+
+The draft confirms several documented habits:
+
+- The abstract arc runs from a problem class to one concrete instance, then the constraint that makes it hard, the method, the mechanism, the consequence, and a bounded validation: *“We validate the approach in numerical simulation, and present preliminary results from beam-based tests.”*
+- A concrete instance maps abstract roles to hardware after a colon. Corrector magnets serve as controls, BPMs provide observables, and each quadrupole configuration defines a machine state.
+- A constraint sentence uses specific anaphora and a reason clause: *“Such a task is particularly challenging when switching machine state is costly, since evaluating the objective requires information from every state.”*
+- *Leverage* again means using information already available (*“by leveraging the MTGP posterior over unvisited states”*).
+- Acronyms are defined in parentheses at first use and then repeated.
+- Evaluation is carried by mechanism rather than adjectives. The text contains no boosters and only the hedge *preliminary*.
+
+It also suggests habits to test in the next corpus pass:
+
+- **Comma + *-ing* consequence clauses** (*“…, learning correlations both within and across machine states”*, *“…, reducing the number of state switches needed”*).
+- **Paired em-dashes**, one around an appositive list of examples and one around a qualification. Two pairs in 195 words is about 10 pairs per 1,000 words, which is probably more than in the copyedited papers.
+- **A bare *This*** when the referent is the whole preceding claim (*“This allows measurements from one state to update predictions about all others”*).
+
+The draft also contains slips that the skill corrects rather than imitates: a subject–verb disagreement (*objective functions … often involves*) and a missing article (*at quadrupole magnet*).
+
+## Open questions for the next corpus pass
+
+Run `python scripts/corpus.py fetch` and `profile`, then answer these before changing guidance:
+
+1. Is the past/present split as described: past for work done and present for method behavior, figures, and paper content? Does the 2026 paper differ from the 2023 paper?
+2. How often is a sentence-initial *This* followed by a noun rather than a verb? Does the bare form drop between the drafts and the published papers?
+3. Which 3- and 4-word bundles recur in at least half the texts (for example *the number of*, *in order to*, *as well as*, *can be used to*)? Do they belong in the diction section, or are they generic academic English?
+4. Are comma + *-ing* consequence clauses and paired dashes characteristic of the published papers, or mainly of drafts?
+5. How are citations placed: at the end of the claim, as *Ref. [n]* subjects, or as *et al.* narratives? How is prior work characterized?
+6. What are the nominalization and passive rates? Did they change between 2022 and 2026 as first person declined?
+7. What is the modal mix within qualification, for example *can* for capability versus *may* for possibility?
+8. Which words rose or fell between 2022–2023 and 2025–2026 once topic vocabulary is set aside?
 
 ## Limits of the evidence
 
